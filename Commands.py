@@ -1,6 +1,6 @@
 import shutil
 import os
-
+from matcher import wrongDir
 
 def cNextDir(subItem):
     i = os.getcwd()
@@ -19,6 +19,16 @@ def current():
 def start():
     os.chdir("/home")
 
+#def optDir():
+    #return os.listdir()
+   
+#def optCmd():
+    #cmd = ["cd", "ls", "search", "run", "rm", "touch", "mkdir", "mv", "cp", "rmdir", "findext"]
+    #return cmd
+#-----------------------------------------------------
+
+
+
 
 def cd(item): #opens or backs out of a dir
     x = item.split(" ", 1)
@@ -29,7 +39,7 @@ def cd(item): #opens or backs out of a dir
             o = [c, x]
             os.chdir("/".join(o))
         else:
-            print("That file doesnt exist (maybe you got the name wrong?)")
+            print(f"That file doesnt exist (maybe you meant {wrongDir(x[1])})")
     else:
         c = str(os.getcwd()).split("/")
         if len(c) >= 3:
@@ -47,7 +57,7 @@ def search(item): #Just confirms if a file is there
         if os.path.exists(item):
             print(f"{item} is present")
         else:
-            print(f"Sorry! {item} is not here!")
+            print(f"Sorry! {item} is not here! Perhaps you meant {wrongDir(item)}")
 
 def run(item): #should run a file or even a normal command
     x = item.split(" ", 1)
@@ -69,7 +79,7 @@ def rm(item): #removes a file NOT a folder
                     os.remove(n)
                     print(f"{n} deleted")
         else:
-            print(f"{n} doesnt exist (maybe you got the name wrong?)")
+            print(f"{n} doesnt exist (maybe you meant {wrongDir(x[1])})")
     else:
         print("Not enough arguments")
 
@@ -98,40 +108,46 @@ def mkdir(item): # creates a folder
             print("No file created (Name taken)")
 
 def mv(item): # moves files 
-    x = item.split(" ", 1)
-    if len(x) == 2:
-        x = x[1]
-        x = x.split(" -/- ", 1)
-        fail = "Usage: mv source -/- destination"
-        st = x.pop(0)
-        des = x.pop(0)
-        #print(st)
-        #print(des)
-        if os.path.exists(st):
-            os.replace(st, des)
-            print("Files have been moved")
+    try:
+        x = item.split(" ", 1)
+        if len(x) == 2:
+            x = x[1]
+            x = x.split(" -/- ", 1)
+            fail = "Usage: mv source -/- destination"
+            st = x.pop(0)
+            des = x.pop(0)
+            #print(st)
+            #print(des)
+            if os.path.exists(st):
+                os.replace(st, des)
+                print("Files have been moved")
+            else:
+                print(f"{fail} \n Maybe you got the path wrong?")
         else:
-            print(f"{fail} \n Maybe you got the path wrong?")
-    else:
-        print(f"{fail} \n Maybe you didnt put enough arguments?")
+            print(f"{fail} \n Maybe you didnt put enough arguments?")
+    except:
+        print("An error has occured")
     
 def cp(item): #copies files 
-    x = item.split(" ", 1)
-    fail = "Usage: cp source -/- destination"
-    if len(x) == 2:
-        x = x[1]
-        x = x.split(" -/- ", 1)
-        st = x.pop(0)
-        des = x.pop(0)
-        #print(st)
-        #print(des)
-        if os.path.exists(st):
-            shutil.copy2(st, des)
-            print("Files have been copied")
+    try:
+        x = item.split(" ", 1)
+        fail = "Usage: cp source -/- destination"
+        if len(x) == 2:
+            x = x[1]
+            x = x.split(" -/- ", 1)
+            st = x.pop(0)
+            des = x.pop(0)
+            #print(st)
+            #print(des)
+            if os.path.exists(st):
+                shutil.copy2(st, des)
+                print("Files have been copied")
+            else:
+                print(f"{fail} \n Maybe you got the path wrong?")
         else:
-            print(f"{fail} \n Maybe you got the path wrong?")
-    else:
-        print(f"{fail} \n Maybe you didnt put enough arguments?")
+            print(f"{fail} \n Maybe you didnt put enough arguments?")
+    except:
+        print("An error has occured")
 
 def rmdir(item): # removes folders
     x = item.split(" ", 1)
@@ -145,22 +161,25 @@ def rmdir(item): # removes folders
             else:
                 print(f"There may be some files inside")
     else:
-        print(f"{n} doesnt exist (maybe you got the name wrong?)")
+        print(f"{n} doesnt exist (maybe you meant {wrongDir(n)}?)")
 
 def findext(item): # finds files with given extension
-    def ext(i):
-        if x.endswith(i):
-            l.append(x)
-    g = item.split(" ", 1)
-    if len(g) == 2:
-        g = g[1]
-        o = list(os.listdir())
-        l = []
-        if g[0] == ".":
-            for x in o:
-                ext(x)
-        else:
-            j = "." + g
-            for x in o:
-                ext(j)
-        print(l)
+    try:
+        def ext(i):
+            if x.endswith(i):
+                l.append(x)
+        g = item.split(" ", 1)
+        if len(g) == 2:
+            g = g[1]
+            o = list(os.listdir())
+            l = []
+            if g[0] == ".":
+                for x in o:
+                    ext(x)
+            else:
+                j = "." + g
+                for x in o:
+                    ext(j)
+            print(l)
+    except:
+        print("An error has occured")
